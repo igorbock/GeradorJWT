@@ -1,0 +1,121 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<EditForm Model="_jsonWebToken" OnValidSubmit="EnviarJWT">
+    <DataAnnotationsValidator />
+    <Card Class="mt-2">
+        <CardBody>
+            <CardTitle>Data e hora de emissão</CardTitle>
+            <div class="form-group mt-2">
+                <Tooltip Title="Data da emissão do token" Placement="TooltipPlacement.Top">
+                    <DateInput Placeholder="IssuedTime" TValue="DateOnly?" @bind-Value="@_jsonWebToken.IssuedDay" />
+                </Tooltip>
+                <ValidationMessage For="@(() => _jsonWebToken.IssuedDay)" />
+            </div>
+            <div class="form-group mt-2">
+                <Tooltip Title="Hora da emissão do token" Placement="TooltipPlacement.Top">
+                    <TimeInput Placeholder="IssuedTime" TValue="TimeOnly?" @bind-Value="@_jsonWebToken.IssuedTime" />
+                </Tooltip>
+                <ValidationMessage For="@(() => _jsonWebToken.IssuedTime)" />
+            </div>
+        </CardBody>
+    </Card>
+    <Card Class="mt-2">
+        <CardBody>
+            <CardTitle>Data e hora de expiração</CardTitle>
+            <CardSubTitle>Não podem ser menores que os valores de emissão</CardSubTitle>
+            <div class="form-group mt-2">
+                <Tooltip Title="Data da expiração do token" Placement="TooltipPlacement.Top">
+                    <DateInput Placeholder="ExpirationDay" TValue="DateOnly?" @bind-Value="@_jsonWebToken.ExpirationDay" />
+                </Tooltip>
+                <ValidationMessage For="@(() => _jsonWebToken.ExpirationDay)" />
+            </div>
+            <div class="form-group mt-2">
+                <Tooltip Title="Hora da expiração do token" Placement="TooltipPlacement.Top">
+                    <TimeInput Placeholder="ExpirationTime" TValue="TimeOnly?" @bind-Value="@_jsonWebToken.ExpirationTime" />
+                </Tooltip>
+                <ValidationMessage For="@(() => _jsonWebToken.ExpirationTime)" />
+            </div>
+        </CardBody>
+    </Card>
+    <Card Class="mt-2">
+        <CardBody>
+            <CardTitle>Identificadores</CardTitle>
+            <div class="form-group mt-2">
+                <Tooltip Title="Identificador ou nome do emissor do token. Geralmente uma URL" Placement="TooltipPlacement.Top">
+                    <InputText class="form-control" placeholder="Issuer" @bind-Value="_jsonWebToken.Issuer" />
+                </Tooltip>
+                <ValidationMessage For="@(() => _jsonWebToken.Issuer)" />
+            </div>
+            <div class="form-group mt-2">
+                <Tooltip Title="Identificador ou nome do destinatário do token. O destinatário deve corresponder para validação" Placement="TooltipPlacement.Top">
+                    <InputText class="form-control" placeholder="Audience" @bind-Value="_jsonWebToken.Audience" />
+                </Tooltip>
+                <ValidationMessage For="@(() => _jsonWebToken.Audience)" />
+            </div>
+            <div class="form-group mt-2">
+                <Tooltip Title="Id ou nome do representante do token. Geralmente um usuário" Placement="TooltipPlacement.Top">
+                    <InputText class="form-control" placeholder="Subject" @bind-Value="_jsonWebToken.Subject" />
+                </Tooltip>
+                <ValidationMessage For="@(() => _jsonWebToken.Subject)" />
+            </div>
+        </CardBody>
+    </Card>
+    <Card Class="mt-2">
+        <CardBody>
+            <CardTitle>Claims</CardTitle>
+            <div class="form-inline mt-2">
+                <InputText class="form-control" placeholder="Chave" @bind-Value="_novaClaimChave" />
+                <InputText class="form-control mt-1" placeholder="Valor" @bind-Value="_novaClaimValor" />
+
+                <button type="button" class="btn btn-secondary mt-1" @onclick="AdicionarClaim">Adicionar</button>
+            </div>
+            @foreach (var item in _jsonWebToken.Claims!)
+            {
+                <Badge Class="ma-2" Color="BadgeColor.Info">'@item.Chave' = '@item.Valor'</Badge>
+            }
+        </CardBody>
+    </Card>
+    <Card Class="mt-2">
+        <CardBody>
+            <CardTitle>Chave e criptografia</CardTitle>
+            <div class="form-group mt-2">
+                <Tooltip Title="Chave de segurança única será o valor que o algoritmo vai usar na criptografia" Placement="TooltipPlacement.Top">
+                    <InputText class="form-control" placeholder="Key" @bind-Value="_jsonWebToken.Key" />
+                </Tooltip>
+                <ValidationMessage For="@(() => _jsonWebToken.Key)" />
+            </div>
+            <div class="form-group mt-2">
+                <Tooltip Title="Tipo de algoritmo usado na criptografia" Placement="TooltipPlacement.Top">
+                    <InputSelect class="form-select" placeholder="Algorithm" @bind-Value="_jsonWebToken.Algorithm">
+                        <option selected value"...">...</option>
+                        <option value="HS256">HS256</option>
+                        <option value="HS384">HS384</option>
+                        <option value="HS512">HS512</option>
+                    </InputSelect>
+                </Tooltip>
+                <ValidationMessage For="@(() => _jsonWebToken.Algorithm)" />
+            </div>
+        </CardBody>
+    </Card>
+
+    <Tooltip Title="Abrirá o novo token no Modal" Placement="TooltipPlacement.Right">
+        <button type="submit" class="btn btn-primary mt-3 mb-3">Criar JWT</button>
+    </Tooltip>
+</EditForm>
+
+<button @onclick="IniciarDadosTela" class="btn btn-info mt-1 mb-3">Limpar</button>
+
+<Modal @ref="_modal" Title="Json Web Token">
+    <BodyTemplate>
+        <InputTextArea class="form-control" @bind-Value="@_token" />
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="FecharModal">Fechar</Button>
+        <Button Color="ButtonColor.Primary" @onclick="@(async () => await CopiarTokenAsync())">Copiar</Button>
+    </FooterTemplate>
+</Modal>
+
+<Toasts class="p-3" Messages="_mensagens" AutoHide="true" StackLength="3" Placement="ToastsPlacement.BottomRight" />
+
