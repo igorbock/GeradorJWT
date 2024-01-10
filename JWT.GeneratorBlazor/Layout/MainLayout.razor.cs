@@ -17,7 +17,11 @@ public partial class MainLayout
     {
         navItems = new List<NavItem>
         {
+#if DEBUG
             new NavItem { Id = "1", Href = "/", IconName = IconName.HouseDoorFill, Text = "Home", Match=NavLinkMatch.All},
+#else
+            new NavItem { Id = "1", Href = "/JWT.GeneratorBlazor", IconName = IconName.HouseDoorFill, Text = "Home", Match=NavLinkMatch.All},
+#endif
         };
 
         return navItems;
