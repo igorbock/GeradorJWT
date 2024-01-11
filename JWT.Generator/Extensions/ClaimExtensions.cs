@@ -2,9 +2,12 @@
 
 public static class ClaimExtensions
 {
-    public static IEnumerable<System.Security.Claims.Claim> TransformarClaims(this IEnumerable<Claim> claims)
+    public static ObservableCollection<System.Security.Claims.Claim> TransformarClaims(this ObservableCollection<Claim> claims)
     {
+        var retorno = new ObservableCollection<System.Security.Claims.Claim>();
         foreach (var claim in claims)
-            yield return new System.Security.Claims.Claim(claim.Chave!, claim.Valor!);
+            retorno.Add(new System.Security.Claims.Claim(claim.Chave!, claim.Valor!));
+
+        return retorno;
     }
 }

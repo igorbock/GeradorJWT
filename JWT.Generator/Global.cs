@@ -9,3 +9,4 @@ global using Microsoft.IdentityModel.Tokens;
 
 global using System.Text;
 global using System.IdentityModel.Tokens.Jwt;
+global using System.Collections.ObjectModel;

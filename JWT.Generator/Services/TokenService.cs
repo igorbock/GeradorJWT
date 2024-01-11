@@ -7,6 +7,9 @@ public class TokenService : ITokenService
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jsonWebToken.Key!));
         var credentials = new SigningCredentials(securityKey, jsonWebToken.Algorithm);
 
+        var subject = new Claim { Chave = System.Security.Claims.ClaimTypes.NameIdentifier, Valor = jsonWebToken.Subject! };
+        jsonWebToken.Claims?.Add(subject);
+
         var jwt = new JwtSecurityToken(
             issuer: jsonWebToken.Issuer,
             audience: jsonWebToken.Audience,
